@@ -1,0 +1,80 @@
+= pohodactl
+
+`pohodactl.ps1` is a PowerShell script for automating https://www.stormware.cz/pohoda/[STORMWARE POHODA] accounting
+software. You can use it to:
+
+* start, stop and get status of https://www.stormware.cz/pohoda/xml/mserver/[mServers]
+* list connected users
+* run an https://www.stormware.cz/podpora/faq/pohoda/185/Jake-jsou-moznosti-automatickych-uloh-programu-POHODA/?id=3245[automated task]
+
+IMPORTANT: The script should work with fairly recent versions of POHODA. Only POHODA SQL and POHODA E1 are supported.
+
+== Installation
+
+Download `pohodactl.ps1` and `pohodactl.conf` and keep them in the same directory. Modify the following options in
+`pohodactl.conf` according to your environment:
+
+[cols="~,~"]
+|===
+|`CLIENT`
+|Path to `Pohoda.exe`.
+
+|`SQLSERVER`
+|SQL Server hostname.
+|===
+
+Backslashes must be escaped using another backslash (e.g. `\\COMPUTER\Pohoda.exe` becomes `\\\\COMPUTER\\Pohoda.exe`).
+
+If you want to keep the configuration file in a different directory or under a different name, you need to provide its
+path to `pohodactl.ps1` as `-Config` option.
+
+pohodactl will use the credentials of the current user when authorizing to SQL Server.
+
+== Usage
+
+[source,powershell]
+----
+PS> .\pohodactl.ps1 [COMMAND] [SUBCOMMAND] [ARGUMENT] [OPTIONS]
+----
+
+* `client`
+** `list-active`
++
+Prints a list of connected users.
+* `mserver`
+** `status`
++
+Prints a list of configured mServers and their status.
+** `start`
++
+Requires mServer name as the argument. Starts the mServer.
+** `stop`
++
+Accepts mServer name as the argument. Stops the mServer or all mServers if argument is empty.
+* `task`
+** `run`
++
+Requires task number as the argument. Runs the task.
+
+=== Examples
+
+.List connected users
+[source,powershell]
+----
+PS> .\pohodactl.ps1 client list-active
+
+ Id PohodaUser LastActive          Computer   RemoteComputer WindowsUser Database
+ -- ---------- ----------          --------   -------------- ----------- --------
+123 @          01.01.2022 12:00:00 UCTOPC                    winusr      StwPh_12345678_2022
+124 @          01.01.2022 12:00:00 WINSERVER  SEF-PC         sef         StwPh_12345678_2022
+----
+
+.Enumerate mServers
+[source,powershell]
+----
+PS> .\pohodactl.ps1 mserver status
+
+Year IsRunning Name     Ico      Uri
+---- --------- ----     ---      ---
+2022      True mserver  12345678 http://WINSERVER:8001
+----
