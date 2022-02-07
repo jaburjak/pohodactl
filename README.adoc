@@ -80,7 +80,7 @@ PS> .\pohodactl.ps1 client list-active
 ----
 PS> .\pohodactl.ps1 mserver status
 
-Year IsRunning Name     Ico      Uri
+Year IsRunning Name     Ico      Url
 ---- --------- ----     ---      ---
 2022      True mserver  12345678 http://WINSERVER:8001
 ----

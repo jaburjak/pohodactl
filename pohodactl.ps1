@@ -43,7 +43,7 @@
 .EXAMPLE
     PS> .\pohodactl.ps1 mserver status
     
-    Year IsRunning Name     Ico      Uri
+    Year IsRunning Name     Ico      Url
     ---- --------- ----     ---      ---
     2022      True mserver  12345678 http://WINSERVER:8001
 
@@ -188,7 +188,7 @@ function Get-PohodaMservers {
     .OUTPUTS
         System.Collections.ArrayList
         
-	List of mServers. Each item will be a HashTable with keys “Name”, “IsRunning”, “Ico”, “Year” and “Uri”.
+	List of mServers. Each item will be a HashTable with keys “Name”, “IsRunning”, “Ico”, “Year” and “Url”.
     #>
     
     param(
@@ -214,7 +214,7 @@ function Get-PohodaMservers {
             IsRunning = $($instance.running) -ieq "true";
             Ico = $($instance.company.ico);
             Year = $($instance.company.year);
-            Uri = $($instance.URIs.URI | Select -First 1)
+            Url = $($instance.URIs.URI | Select -First 1)
         }
     }
     
