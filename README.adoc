@@ -37,24 +37,30 @@ pohodactl will use the credentials of the current user when authorizing to SQL S
 PS> .\pohodactl.ps1 [COMMAND] [SUBCOMMAND] [ARGUMENT] [OPTIONS]
 ----
 
-* `client`
-** `list-active`
-+
-Prints a list of connected users.
-* `mserver`
-** `status`
-+
-Prints a list of configured mServers and their status.
-** `start`
-+
-Requires mServer name as the argument. Starts the mServer.
-** `stop`
-+
-Accepts mServer name as the argument. Stops the mServer or all mServers if argument is empty.
-* `task`
-** `run`
-+
-Requires task number as the argument. Runs the task.
+[cols="2,2,6",options=header]
+|===
+|Command
+|Subcommand
+|Description
+
+|`client`
+|`list-active`
+|Prints a list of connected users.
+
+.3+.^|`mserver`
+|`status`
+|Prints a list of configured mServers and their status.
+
+|`start`
+|Requires mServer name as the argument. Starts the mServer.
+
+|`stop`
+|Accepts mServer name as the argument. Stops the mServer or all mServers if argument is empty.
+
+|`task`
+|`run`
+|Requires task number as the argument. Runs the task.
+|===
 
 === Examples
 
