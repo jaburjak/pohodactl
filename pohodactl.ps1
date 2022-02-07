@@ -226,6 +226,10 @@ function Start-PohodaMserver {
     <#
     .SYNOPSIS
         Starts POHODA mServer.
+
+    .DESCRIPTION
+        The function will wait the specified amount of seconds after the start request is sent to POHODA. Only a single
+        instance of a mServer will be started.
     #>
     
     param(
@@ -237,11 +241,22 @@ function Start-PohodaMserver {
         [Parameter(Mandatory = $false)] [int] $Wait = 10
     )
     
-    Start-Process -NoNewWindow -FilePath $Client -ArgumentList @("/http", "start", $Name)
+    $status = Get-PohodaMservers -Client $Client
+    $running = $false
+
+    foreach ($instance in $status) {
+        if ($instance.Name -eq $Name) {
+            $running = $instance.IsRunning
+        }
+    }
+
+    if (!$running) {
+        Start-Process -NoNewWindow -FilePath $Client -ArgumentList @("/http", "start", $Name)
     
-    # Cannot use -Wait in Start-Process, as it would block while the mServer is running.
+        # Cannot use -Wait in Start-Process, as it would block while the mServer is running.
     
-    Sleep -Seconds $Wait
+        Sleep -Seconds $Wait
+    }
 }
 
 
@@ -255,10 +270,14 @@ function Stop-PohodaMserver {
         # Path to Pohoda.exe.
         [Parameter(Mandatory = $true)] [string] $Client,
         # Name of the mServer to stop. Omit this parameter to stop all mServers.
-        [Parameter(Mandatory = $false)] [string] $Name = "*"
+        [Parameter(Mandatory = $false)] [string] $Name = "*",
+        # Wait time after stopping the mServer(s).
+        [Parameter(Mandatory = $false)] [int] $Wait = 10
     )
     
     Start-Process -NoNewWindow -FilePath $Client -ArgumentList @("/http", "stop", $Name)
+
+    Sleep -Seconds $Wait
 }
 
 
