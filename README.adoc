@@ -47,9 +47,19 @@ PS> .\pohodactl.ps1 [COMMAND] [SUBCOMMAND] [ARGUMENT] [OPTIONS]
 |`list-active`
 |Prints a list of connected users.
 
-.3+.^|`mserver`
+.4+.^|`mserver`
 |`status`
 |Prints a list of configured mServers and their status.
+
+|`health`
+a|
+Performs a health-check of configured mServers. `pohodactl` will send an authenticated HTTP request to the mServer to check if it’s responding. You can optionally pass a single mServer name as the argument, otherwise all mServers will be queried.
+
+Requires two additional configuration options to be present in `pohodactl.conf` – `PHUSER` and `PHPASSWORD`, which must contain valid POHODA user credentials.
+
+CAUTION: Remember to restrict access to the credentials using proper file system permissions!
+
+Exit code will be zero if all mServers are running and responding, non-zero otherwise.
 
 |`start`
 |Requires mServer name as the argument. Starts the mServer.
@@ -80,7 +90,17 @@ PS> .\pohodactl.ps1 client list-active
 ----
 PS> .\pohodactl.ps1 mserver status
 
-Year IsRunning Name     Ico      Url
----- --------- ----     ---      ---
-2022      True mserver  12345678 http://WINSERVER:8001
+Year IsRunning Name    Ico      Url
+---- --------- ----    ---      ---
+2022      True mserver 12345678 http://WINSERVER:8001
+----
+
+.Health-check mServers
+[source,powershell]
+----
+PS> .\pohodactl.ps1 mserver health
+
+IsRunning Name    IsResponding
+--------- ----    ------------
+     True mserver         True
 ----

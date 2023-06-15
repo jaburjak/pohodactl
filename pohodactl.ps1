@@ -1,5 +1,5 @@
 ﻿<#
-Copyright 2022 Jakub Jabůrek
+Copyright 2023 Jakub Jabůrek
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -42,6 +42,11 @@ limitations under the License.
     stopped.
     
     “mserver status” outputs all configured mServers and their status.
+
+    “mserver health” sends a health-check request to verify mServers are really working. This command requires two
+    additional options to be present in the “pohodactl.conf” file – “PHUSER” and “PHPASSWORD”, which must contain valid
+    POHODA user credentials. The command can be followed by the name of a single mServer you want to check, otherwise
+    it will query every configured mServer.
     
     “task run” must be followed by the number of the automatic task you want to run.
 
@@ -62,6 +67,13 @@ limitations under the License.
     Year IsRunning Name     Ico      Url
     ---- --------- ----     ---      ---
     2022      True mserver  12345678 http://WINSERVER:8001
+
+.EXAMPLE
+    PS> .\pohodactl.ps1 mserver health
+
+    IsRunning Name    IsResponding
+    --------- ----    ------------
+         True mserver        True
 
 .EXAMPLE
     PS> .\pohodactl.ps1 mserver start mserver_name
@@ -238,6 +250,52 @@ function Get-PohodaMservers {
 }
 
 
+function Check-PohodaMserverHealth {
+    <#
+    .SYNOPSIS
+        Checks whether the POHODA mServer is responding to requests.
+
+    .DESCRIPTION
+        Queries the mServer over HTTP and verifies whether it can return a success response. The mServer must respond
+        within 15 seconds. Authentication is required in order to force the mServer to retrieve accounting unit
+        information from the database, which verifies the database connection is working.
+
+    .OUTPUTS
+        bool
+    #>
+
+    param(
+        # URL of the mServer.
+        [Parameter(Mandatory = $true)] [string] $Url,
+        # POHODA user name.
+        [Parameter(Mandatory = $true)] [string] $User,
+        # POHODA user password.
+        [Parameter(Mandatory = $true)] [string] $Password
+    )
+
+    $authorization = "${User}:$Password"
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($authorization)
+    $encoded =[Convert]::ToBase64String($bytes)
+
+    $headers = @{
+        "STW-Authorization" = "Basic $encoded"
+    }
+
+    try {
+        $response = Invoke-WebRequest -Uri "$Url/status?companyDetail" -Headers $headers -TimeoutSec 15
+        $status = $response.StatusCode
+    } catch {
+        $status = $_.Exception.Response.StatusCode.value__
+    }
+
+    if ($status -eq 200) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+
 function Start-PohodaMserver {
     <#
     .SYNOPSIS
@@ -349,6 +407,50 @@ if ($Command -eq "client") {
         Get-PohodaMservers -Client $cfg.CLIENT | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
         
         exit 0
+    } elseif ($SubCommand -eq "health") {
+        $requiredCfgOptions = @("PHUSER", "PHPASSWORD")
+
+        foreach ($option in $requiredCfgOptions) {
+            if (!$cfg.ContainsKey($option)) {
+                throw "Configuration is missing option $option, which is required for this command."
+            }
+        }
+
+        if ($Argument -eq "") {
+            $Argument = "*"
+        }
+
+        $result = @()
+        $code = 0
+
+        Get-PohodaMservers -Client $cfg.CLIENT | ForEach {
+            if ($Argument -eq "*" -or $_.Name -eq $Argument) {
+                $running = $false
+                $responding = $false
+
+                if ($_.IsRunning) {
+                    $running = $true
+
+                    $responding = Check-PohodaMserverHealth -Url $_.Url -User $cfg.PHUSER -Password $cfg.PHPASSWORD
+
+                    if (-not $responding) {
+                        $code = 1
+                    }
+                } else {
+                    $code = 1
+                }
+
+                $result += @{
+                    Name = $_.Name;
+                    IsRunning = $running;
+                    IsResponding = $responding;
+                }
+            }
+        }
+
+        $result | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
+
+        exit $code
     } else {
         throw "Unknown subcommand: $SubCommand."
     }
