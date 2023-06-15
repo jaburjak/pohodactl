@@ -36,7 +36,8 @@ limitations under the License.
     
     “client list-active” displays connected POHODA clients.
     
-    “mserver start” must be followed by the name of the mServer you want to start.
+    “mserver start” can be followed by the name of the mServer you want to start, otherwise all stopped mServer will be
+    started.
     
     “mserver stop” can be followed by the name of the mServer you want to stop, otherwise all running mServers will be
     stopped.
@@ -74,6 +75,16 @@ limitations under the License.
     IsRunning Name    IsResponding
     --------- ----    ------------
          True mserver        True
+
+.EXAMPLE
+    PS> .\pohodactl.ps1 mserver health mserver
+
+    IsRunning Name    IsResponding
+    --------- ----    ------------
+         True mserver        True
+
+.EXAMPLE
+    PS> .\pohodactl.ps1 mserver start
 
 .EXAMPLE
     PS> .\pohodactl.ps1 mserver start mserver_name
@@ -389,11 +400,19 @@ if ($Command -eq "client") {
 } elseif ($Command -eq "mserver") {
     if ($SubCommand -eq "start") {
         if ($Argument -eq "") {
-            throw "POHODA mServer name is missing."
+            $Argument = "*"
         }
-        
-        Start-PohodaMserver -Client $cfg.CLIENT -Name $Argument
-        
+
+        if ($Argument -eq "*") {
+            Get-PohodaMservers -Client $cfg.CLIENT | ForEach {
+                if (-not $_.IsRunning) {
+                    Start-PohodaMserver -Client $cfg.CLIENT -Name $_.Name
+                }
+            }
+        } else {
+            Start-PohodaMserver -Client $cfg.CLIENT -Name $Argument
+        }
+
         exit 0
     } elseif ($SubCommand -eq "stop") {
         if ($Argument -eq "") {

@@ -53,7 +53,7 @@ PS> .\pohodactl.ps1 [COMMAND] [SUBCOMMAND] [ARGUMENT] [OPTIONS]
 
 |`health`
 a|
-Performs a health-check of configured mServers. `pohodactl` will send an authenticated HTTP request to the mServer to check if it’s responding. You can optionally pass a single mServer name as the argument, otherwise all mServers will be queried.
+Performs a health-check of configured mServers. pohodactl will send an authenticated HTTP request to the mServer to check if it’s responding. You can optionally pass a single mServer name as the argument, otherwise all mServers will be queried.
 
 Requires two additional configuration options to be present in `pohodactl.conf` – `PHUSER` and `PHPASSWORD`, which must contain valid POHODA user credentials.
 
@@ -62,10 +62,10 @@ CAUTION: Remember to restrict access to the credentials using proper file system
 Exit code will be zero if all mServers are running and responding, non-zero otherwise.
 
 |`start`
-|Requires mServer name as the argument. Starts the mServer.
+|Accepts mServer name as the argument. Starts the mServer or all mServers if the argument is empty.
 
 |`stop`
-|Accepts mServer name as the argument. Stops the mServer or all mServers if argument is empty.
+|Accepts mServer name as the argument. Stops the mServer or all mServers if the argument is empty.
 
 |`task`
 |`run`
