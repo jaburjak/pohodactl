@@ -130,7 +130,7 @@ function Invoke-Sql {
     .OUTPUTS
         System.Data.DataTableCollection
         
-	Query result.
+        Query result.
     #>
     
     param(
@@ -168,7 +168,7 @@ function Get-PohodaActiveClients {
         System.Collections.ArrayList
         
         List of connected clients. Each item will be a HashTable with keys “ID”, “PohodaUser”, “Database”,
-	“WindowsUser”, “Computer”, “RemoteComputer” and “LastActive”.
+        “WindowsUser”, “Computer”, “RemoteComputer” and “LastActive”.
     #>
     
     param(
@@ -204,7 +204,7 @@ function Get-PohodaMservers {
     .OUTPUTS
         System.Collections.ArrayList
         
-	List of mServers. Each item will be a HashTable with keys “Name”, “IsRunning”, “Ico”, “Year” and “Url”.
+        List of mServers. Each item will be a HashTable with keys “Name”, “IsRunning”, “Ico”, “Year” and “Url”.
     #>
     
     param(
@@ -360,11 +360,10 @@ if ($Command -eq "client") {
         
         Invoke-PohodaTask -Client $cfg.CLIENT -Task $Argument
         
-	exit 0
+        exit 0
     } else {
         throw "Unknown subcommand: $SubCommand."
     }
 } else {
     throw "Unknown command: $Command."
 }
-
