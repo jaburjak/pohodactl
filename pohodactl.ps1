@@ -253,7 +253,7 @@ function Get-PohodaMservers {
             IsRunning = $($instance.running) -ieq "true";
             Ico = $($instance.company.ico);
             Year = $($instance.company.year);
-            Url = $($instance.URIs.URI | Select -First 1)
+            Url = $($instance.URI)
         }
     }
     
@@ -360,7 +360,7 @@ function Stop-PohodaMserver {
         [Parameter(Mandatory = $false)] [int] $Wait = 10
     )
     
-    Start-Process -NoNewWindow -FilePath $Client -ArgumentList @("/http", "stop", $Name)
+    Start-Process -NoNewWindow -FilePath $Client -ArgumentList @("/http", "stop", $Name, "/f")
 
     Sleep -Seconds $Wait
 }

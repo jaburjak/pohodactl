@@ -7,7 +7,7 @@ software. You can use it to:
 * list connected users
 * run an https://www.stormware.cz/podpora/faq/pohoda/185/Jake-jsou-moznosti-automatickych-uloh-programu-POHODA/?id=3245[automated task]
 
-IMPORTANT: The script should work with fairly recent versions of POHODA. Only POHODA SQL and POHODA E1 are supported.
+IMPORTANT: The script should work with recent versions of POHODA (starting with release 13400). Only POHODA SQL and POHODA E1 are supported.
 
 == Installation
 
