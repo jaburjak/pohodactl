@@ -274,11 +274,12 @@ function Get-PohodaMservers {
     if ($Zabbix) {
         foreach ($instance in $response) {
             $mservers += @{
-                ZabbixName = $($instance.name);
-                ZabbixIsRunning = $($instance.running) -ieq "true";
-                ZabbixIco = $($instance.company.ico);
-                ZabbixYear = $($instance.company.year);
-                ZabbixUrl = $($instance.URI)
+                '{#MSRVNAME}' = $($instance.name);
+                '{#MSRV_RUN}' = $($instance.running) -ieq "true";
+                '{#MSRV_ICO}' = $($instance.company.ico);
+                '{#MSRVYEAR}' = $($instance.company.year);
+                '{#MSRV_URL}' = $($instance.URI)
+                '{#MSRVPORT}' = $($instance.URI -replace "*://.*:", "");
             }
         }
     } else {
