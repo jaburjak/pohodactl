@@ -278,7 +278,7 @@ function Get-PohodaMservers {
                 '{#MSRV_RUN}' = $($instance.running) -ieq "true";
                 '{#MSRV_ICO}' = $($instance.company.ico);
                 '{#MSRVYEAR}' = $($instance.company.year);
-                '{#MSRV_URL}' = $($instance.URI)
+                '{#MSRV_URL}' = $($instance.URI);
                 '{#MSRVPORT}' = $($instance.URI -replace "http://", "" -replace "/.*", "" -replace ":", "");
             }
         }
