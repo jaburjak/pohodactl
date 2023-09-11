@@ -423,8 +423,12 @@ if ($Command -eq "client") {
         
         exit 0
     } elseif ($SubCommand -eq "status") {
-        Get-PohodaMservers -Client $cfg.CLIENT | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
-        
+        // If $Argument is json export as JSON, otherwise as table.
+        if ($Argument -eq "json") {
+            Get-PohodaMservers -Client $cfg.CLIENT | ForEach { [PSCustomObject] $_ } | ConvertTo-Json
+        } else {
+            Get-PohodaMservers -Client $cfg.CLIENT | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
+        }
         exit 0
     } elseif ($SubCommand -eq "health") {
         $requiredCfgOptions = @("PHUSER", "PHPASSWORD")
