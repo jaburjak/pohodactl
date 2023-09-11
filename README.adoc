@@ -49,7 +49,7 @@ PS> .\pohodactl.ps1 [COMMAND] [SUBCOMMAND] [ARGUMENT] [OPTIONS]
 
 .4+.^|`mserver`
 |`status`
-|Prints a list of configured mServers and their status.
+|Prints a list of configured mServers and their status. Add `json` option to print the list in JSON format.
 
 |`health`
 a|
