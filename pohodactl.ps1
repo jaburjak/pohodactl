@@ -273,13 +273,14 @@ function Get-PohodaMservers {
     # If $Zabbix is true, return zabbix discovery format.
     if ($Zabbix) {
         foreach ($instance in $response) {
+            $port = $instance.URI -replace "http://.*:", "";
             $mservers += @{
                 '{#MSRVNAME}' = $($instance.name);
                 '{#MSRV_RUN}' = $($instance.running) -ieq "true";
                 '{#MSRV_ICO}' = $($instance.company.ico);
                 '{#MSRVYEAR}' = $($instance.company.year);
                 '{#MSRV_URL}' = $($instance.URI);
-                '{#MSRVPORT}' = $($instance.URI -replace "http://", "" -replace "/.*", "" -replace ":", "");
+                '{#MSRVPORT}' = $port;
             }
         }
     } else {
