@@ -279,7 +279,7 @@ function Get-PohodaMservers {
                 '{#MSRV_ICO}' = $($instance.company.ico);
                 '{#MSRVYEAR}' = $($instance.company.year);
                 '{#MSRV_URL}' = $($instance.URI)
-                '{#MSRVPORT}' = $($instance.URI).Split(":")[3];
+                '{#MSRVPORT}' = $($instance.URI -replace "http://", "" -replace "/.*", "" -replace ":", "");
             }
         }
     } else {
