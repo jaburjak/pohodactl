@@ -70,6 +70,27 @@ limitations under the License.
     2022      True mserver  12345678 http://WINSERVER:8001
 
 .EXAMPLE
+    PS> .\pohodactl.ps1 mserver status json
+
+    [
+        {
+            "Year":  "2023",
+            "Url":  "http://SE-APP01:50001", 
+            "IsRunning":  true,
+            "Name":  "NOVAK",
+            "Ico":  "12345678"
+        },
+        {
+            "Year":  "2023",
+            "Url":  "http://SE-APP01:50002", 
+            "IsRunning":  true,
+            "Name":  "VITEX",
+            "Ico":  "69438676"
+        }
+    ]
+
+
+.EXAMPLE
     PS> .\pohodactl.ps1 mserver health
 
     IsRunning Name    IsResponding
@@ -423,7 +444,7 @@ if ($Command -eq "client") {
         
         exit 0
     } elseif ($SubCommand -eq "status") {
-        // If $Argument is json export as JSON, otherwise as table.
+        # If $Argument is json export as JSON, otherwise as table.
         if ($Argument -eq "json") {
             Get-PohodaMservers -Client $cfg.CLIENT | ForEach { [PSCustomObject] $_ } | ConvertTo-Json
         } else {
