@@ -464,7 +464,7 @@ if ($Command -eq "client") {
     } elseif ($SubCommand -eq "status") {
         # If $Argument is json export as JSON, otherwise as table.
         if ($Argument -eq "json") {
-            Get-PohodaMservers -Client $cfg.CLIENT -Zabbix true | ForEach { [PSCustomObject] $_ } | ConvertTo-Json
+            Get-PohodaMservers -Client $cfg.CLIENT -Zabbix $true | ForEach { [PSCustomObject] $_ } | ConvertTo-Json
         } else {
             Get-PohodaMservers -Client $cfg.CLIENT | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
         }
