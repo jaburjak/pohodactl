@@ -253,7 +253,9 @@ function Get-PohodaMservers {
     
     param(
         # Path to Pohoda.exe.
-        [Parameter(Mandatory = $true)] [string] $Client
+        [Parameter(Mandatory = $true)] [string] $Client,
+        # Option to use zabbix dicovery format. Default is false.
+        [Parameter(Mandatory = $false)] [bool] $Zabbix = $false
     )
     
     if (Test-Path "${env:temp}/mserver.xml" -PathType Leaf) {
@@ -268,15 +270,31 @@ function Get-PohodaMservers {
     
     $mservers = @()
     
-    foreach ($instance in $response) {
-        $mservers += @{
-            Name = $($instance.name);
-            IsRunning = $($instance.running) -ieq "true";
-            Ico = $($instance.company.ico);
-            Year = $($instance.company.year);
-            Url = $($instance.URI)
+    # If $Zabbix is true, return zabbix discovery format.
+    if ($Zabbix) {
+        foreach ($instance in $response) {
+            $mservers += @{
+                ZabbixName = $($instance.name);
+                ZabbixIsRunning = $($instance.running) -ieq "true";
+                ZabbixIco = $($instance.company.ico);
+                ZabbixYear = $($instance.company.year);
+                ZabbixUrl = $($instance.URI)
+            }
+        }
+    } else {
+        foreach ($instance in $response) {
+            $mservers += @{
+                Name = $($instance.name);
+                IsRunning = $($instance.running) -ieq "true";
+                Ico = $($instance.company.ico);
+                Year = $($instance.company.year);
+                Url = $($instance.URI)
+            }
         }
     }
+
+
+
     
     $mservers
 }
@@ -446,7 +464,7 @@ if ($Command -eq "client") {
     } elseif ($SubCommand -eq "status") {
         # If $Argument is json export as JSON, otherwise as table.
         if ($Argument -eq "json") {
-            Get-PohodaMservers -Client $cfg.CLIENT | ForEach { [PSCustomObject] $_ } | ConvertTo-Json
+            Get-PohodaMservers -Client $cfg.CLIENT -Zabbix true | ForEach { [PSCustomObject] $_ } | ConvertTo-Json
         } else {
             Get-PohodaMservers -Client $cfg.CLIENT | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
         }
