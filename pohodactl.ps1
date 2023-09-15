@@ -183,12 +183,26 @@ function Invoke-Sql {
         # Database name.
         [Parameter(Mandatory = $true)] [string] $Database,
         # SQL query to execute.
-        [Parameter(Mandatory = $true)] [string] $Query
+        [Parameter(Mandatory = $true)] [string] $Query,
+        # SQL Server username. Default is empty.
+        [Parameter(Mandatory = $false)] [string] $Username = "",
+        # SQL Server password. Default is empty.
+        [Parameter(Mandatory = $false)] [securestring] $Password = "",
+        # SQL Server port. Default is 1433.
+        [Parameter(Mandatory = $false)] [int] $Port = 1433
     )
     
-    $connectionString = "Data Source=$Server; " +
+    # If $Username is empty, use Windows authentication.
+    if ($Username -eq "") {
+        $connectionString = "Data Source=$Server,$Port; " +
             "Integrated Security=SSPI; " +
             "Initial Catalog=$Database"
+    } else {
+        $connectionString = "Data Source=$Server,$Port; " +
+            "User ID=$Username; " +
+            "Password=$Password; " +
+            "Initial Catalog=$Database"
+    }
     
     $connection = new-object system.data.SqlClient.SQLConnection($connectionString)
     $command = new-object system.data.sqlclient.sqlcommand($Query, $connection)
@@ -217,10 +231,14 @@ function Get-PohodaActiveClients {
     
     param(
         # SQL Server hostname.
-        [Parameter(Mandatory = $true)] [string] $SqlServer
+        [Parameter(Mandatory = $true)] [string] $SqlServer,
+        # SQL Server username. Default is empty.
+        [Parameter(Mandatory = $false)] [string] $Username = "",
+        # SQL Server password. Default is empty.
+        [Parameter(Mandatory = $false)] [securestring] $Password = ""
     )
     
-    $query = Invoke-Sql -Query "SELECT * FROM dbo.ConnectedUsr;" -Database "StwPh_sys" -Server $SqlServer
+    $query = Invoke-Sql -Query "SELECT * FROM dbo.ConnectedUsr;" -Database "StwPh_sys" -Server $SqlServer -Username $Username -Password $Password
     
     $clients = @()
     
@@ -433,8 +451,12 @@ $cfg = Get-PohodactlConfiguration $Config
 
 if ($Command -eq "client") {
     if ($SubCommand -eq "list-active") {
-        Get-PohodaActiveClients -SqlServer $cfg.SQLSERVER | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
-        
+        # If $cfg.SQLUSER is defined, use it as SQL Server username.
+        if ($cfg.ContainsKey("SQLUSER")) {
+            Get-PohodaActiveClients -SqlServer $cfg.SQLSERVER -Username $cfg.SQLUSER -Password $cfg.SQLPASSWORD | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
+        } else {
+            Get-PohodaActiveClients -SqlServer $cfg.SQLSERVER | ForEach { [PSCustomObject] $_ } | Format-Table -AutoSize
+        }
         exit 0
     } else {
         throw "Unknown subcommand: $SubCommand."

@@ -21,6 +21,12 @@ Download `pohodactl.ps1` and `pohodactl.conf` and keep them in the same director
 
 |`SQLSERVER`
 |SQL Server hostname.
+
+|`SQLUSER`
+|SQL Server user.
+
+|`SQLPASSWORD`
+|SQL Server password.
 |===
 
 Backslashes must be escaped using another backslash (e.g. `\\COMPUTER\Pohoda.exe` becomes `\\\\COMPUTER\\Pohoda.exe`).
@@ -55,7 +61,7 @@ PS> .\pohodactl.ps1 [COMMAND] [SUBCOMMAND] [ARGUMENT] [OPTIONS]
 a|
 Performs a health-check of configured mServers. pohodactl will send an authenticated HTTP request to the mServer to check if it’s responding. You can optionally pass a single mServer name as the argument, otherwise all mServers will be queried.
 
-Requires two additional configuration options to be present in `pohodactl.conf` – `PHUSER` and `PHPASSWORD`, which must contain valid POHODA user credentials.
+Requires two additional configuration options to be present in `pohodactl.conf` – `PHUSER` and `PHPASSWORD`, which must contain valid POHODA user credentials. For non-default database access please define SQLUSER and SQLPASSWORD options as well.
 
 CAUTION: Remember to restrict access to the credentials using proper file system permissions!
 
