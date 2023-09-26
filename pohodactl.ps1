@@ -51,6 +51,8 @@ limitations under the License.
     
     “task run” must be followed by the number of the automatic task you want to run.
 
+    "mserver discovery" outputs a list of mServers in zabbix discovery format.
+
 .PARAMETER Config
     Path to the “pohodactl.conf” configuration file.
 
@@ -89,6 +91,9 @@ limitations under the License.
         }
     ]
 
+.EXAMPLE
+
+    PS> .\pohodactl.ps1 mserver discovery
 
 .EXAMPLE
     PS> .\pohodactl.ps1 mserver health
@@ -462,7 +467,10 @@ if ($Command -eq "client") {
         throw "Unknown subcommand: $SubCommand."
     }
 } elseif ($Command -eq "mserver") {
-    if ($SubCommand -eq "start") {
+    if ($SubCommand -eq "discovery") {
+        Get-PohodaMservers -Client $cfg.CLIENT -Zabbix $true | ForEach { [PSCustomObject] $_ } | ConvertTo-Json
+        exit 0
+    } elseif ($SubCommand -eq "start") {
         if ($Argument -eq "") {
             $Argument = "*"
         }
