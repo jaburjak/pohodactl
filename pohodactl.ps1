@@ -155,8 +155,10 @@ function Get-PohodactlConfiguration {
     $config = @{}
     
     Get-Content $File | ConvertFrom-StringData | ForEach-Object {
-        $name = $PSItem.Keys[0] | Select -First 1
-        $config.Add($name, $PSItem[$name])
+        if ($PSItem -ne "") {
+            $name = $PSItem.Keys[0] | Select -First 1
+            $config.Add($name, $PSItem[$name])
+        }
     }
     
     $options = @("SQLSERVER", "CLIENT")
