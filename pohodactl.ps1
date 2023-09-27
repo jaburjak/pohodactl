@@ -298,8 +298,12 @@ function Get-PohodaMservers {
     # If $Zabbix is true, return zabbix discovery format.
     if ($Zabbix) {
         foreach ($instance in $response) {
+            if ($instance.running -ieq "true") {
+                $port = $instance.URI.Split(":")[-1];
+            } else {
+                $port = "";
+            }
             # Port is number after last colon in URI.
-            $port = $instance.URI.Split(":")[-1];
             $mservers += @{
                 '{#MSRVNAME}' = $($instance.name);
                 '{#MSRV_RUN}' = $($instance.running) -ieq "true";
