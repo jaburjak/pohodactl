@@ -155,7 +155,7 @@ function Get-PohodactlConfiguration {
     $config = @{}
     
     Get-Content $File | ConvertFrom-StringData | ForEach-Object {
-        if ($PSItem -ne "") {
+        if ($PSItem.Keys.Count -eq 1) {
             $name = $PSItem.Keys[0] | Select -First 1
             $config.Add($name, $PSItem[$name])
         }
