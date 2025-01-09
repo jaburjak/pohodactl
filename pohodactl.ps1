@@ -250,7 +250,7 @@ function Get-PohodaMservers {
     foreach ($instance in $response) {
         $mservers += @{
             Name = $($instance.name);
-            IsRunning = $($instance.running) -ieq "true";
+            IsRunning = $($instance.status) -ieq "Running";
             Ico = $($instance.company.ico);
             Year = $($instance.company.year);
             Url = $($instance.URI)
