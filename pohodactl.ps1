@@ -293,7 +293,7 @@ function Check-PohodaMserverHealth {
     }
 
     try {
-        $response = Invoke-WebRequest -Uri "$Url/status?companyDetail" -Headers $headers -TimeoutSec 15
+        $response = Invoke-WebRequest -UseBasicParsing -Uri "$Url/status?companyDetail" -Headers $headers -TimeoutSec 15
         $status = $response.StatusCode
     } catch {
         $status = $_.Exception.Response.StatusCode.value__
